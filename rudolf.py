@@ -44,6 +44,7 @@ import nose.config
 import nose.core
 import nose.plugins
 import nose.util
+import six
 
 # TODO
 # syntax-highlight traceback Python source lines
@@ -101,7 +102,7 @@ def cube_vals(n):
     val = val / CUBE_SIZE
     b = val % CUBE_SIZE
     a = val / CUBE_SIZE
-    return a, b, c
+    return int(a), int(b), int(c)
 
 
 def rgb_from_xterm(n):
@@ -124,7 +125,7 @@ def xterm_from_rgb(rgb):
     for index in range(0, TABLE_END - TABLE_START):
         rc = RGB_FROM_XTERM_COLOR[index]
         dist = ((rc[0] - rgb[0]) ** 2 +
-                (rc[1] - rgb[1]) ** 2 + 
+                (rc[1] - rgb[1]) ** 2 +
                 (rc[2] - rgb[2]) ** 2)
         if dist < smallest_distance:
             smallest_distance = dist
@@ -728,8 +729,10 @@ class ColorOutputPlugin(nose.plugins.Plugin):
                            "diff-chunk": "magenta",
                            "exception": "red",
                            "skip": "yellow"}
+    if six.PY3: items = default_colorscheme.items()
+    else: items = default_colorscheme.iteritems()
     default_colorscheme = dict((name, parse_color(color)) for name, color in
-                               default_colorscheme.iteritems())
+                               items)
 
     score = 50  # Lower than default plugin level, since the output we're
                 # printing is replacing non-plugin core nose output, which
@@ -784,7 +787,7 @@ class ColorOutputPlugin(nose.plugins.Plugin):
         cs = dict(self.default_colorscheme)
         try:
             user_colorscheme = parse_colorscheme(options.colors)
-        except ValueError, exc:
+        except ValueError as exc:
             filenames = list(conf.files)
             if options.files:
                 filenames.extend(options.files)
