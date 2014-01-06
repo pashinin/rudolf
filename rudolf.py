@@ -29,7 +29,7 @@ following copyright and licensing notice:
 #
 ##############################################################################
 """
-
+from __future__ import print_function
 import binascii
 import doctest
 import os
@@ -557,7 +557,7 @@ Got:
             self.print_doctest_failure(formatted_traceback)
         else:
             self.print_colorized_traceback(formatted_traceback)
-            print >>self._stream
+            print('', file=self._stream)
 
     def print_doctest_failure(self, formatted_failure):
         """Report a doctest failure.
@@ -580,8 +580,8 @@ Got:
                 break
             exc_lines.append(line)
         self.print_colorized_traceback("\n".join(exc_lines))
-        print >>self._stream
-        print >>self._stream, self.separator2
+        print('', file=self._stream)
+        print(self.separator2, file=self._stream)
         exc_lines = []
 
         for line in lines:
@@ -601,17 +601,16 @@ Got:
                         self.color('testname'), test,
                         self.color('normal'), '\n'])
                 else:
-                    print >>self._stream, line
+                    print(line, file=self._stream)
             elif line.startswith('    '):
                 if colorize_diff and len(line) > 4:
                     color = self.diff_color.get(line[4],
                                                 color_of_indented_text)
-                    print >>self._stream, self.colorize(color, line)
+                    print(self.colorize(color, line), file=self._stream)
                 elif colorize_exception:
                     exc_lines.append(line[4:])
                 else:
-                    print >>self._stream, self.colorize(color_of_indented_text,
-                                                        line)
+                    print(self.colorize(color_of_indented_text, line), file=self._stream)
             else:
                 colorize_diff = False
                 if colorize_exception:
@@ -643,8 +642,8 @@ Got:
                     colorize_diff = True
                 else:
                     color_of_indented_text = 'normal'
-                print >>self._stream, line
-        print >>self._stream
+                print(line, file=self._stream)
+        print('', file=self._stream)
 
     def print_colorized_traceback(self, formatted_traceback, indent_level=0):
         """Report a test failure.
@@ -679,19 +678,17 @@ Got:
                     self._stream.write(indentation)
                     self._stream.writelines(tb_lines)
                 else:
-                    print >>self._stream, indentation + line
+                    print(indentation + line, file=self._stream)
             elif line.startswith("    "):
-                print >>self._stream, self.colorize("failed-example",
-                                                    indentation + line)
+                print(self.colorize("failed-example", indentation + line), file=self._stream)
             elif line.startswith("Traceback (most recent call last)"):
-                print >>self._stream, indentation + line
+                print(indentation + line, file=self._stream)
             else:
-                print >>self._stream, self.colorize("exception",
-                                                    indentation + line)
+                print(self.colorize("exception", indentation + line), file=self._stream)
 
     def stop_test(self, test):
         if self._verbose > 1:
-            print >>self._stream
+            print('', file=self._stream)
         self._stream.flush()
 
     def stop_tests(self):
