@@ -90,7 +90,7 @@ def xterm_from_rgb_string(rgb_text):
         raise ValueError(rgb_text)
     if len(bytes) < 3:
         raise ValueError(rgb_text)
-    rgb = map(ord, bytes)
+    rgb = list(map(ord, bytes))
     return xterm_from_rgb(rgb)
 
 
@@ -894,7 +894,7 @@ class ColorOutputPlugin(nose.plugins.Plugin):
         summary = nose.util.odict()
         if not success:
             summary["failures"], summary["errors"] = \
-                map(len, [self._result.__failures, self._result.__errors])
+                list(map(len, [self._result.__failures, self._result.__errors]))
             for cls in self._result.errorClasses.keys():
                 storage, label, isfail = self._result.errorClasses[cls]
                 if not isfail:
@@ -916,7 +916,7 @@ class ColorOutputPlugin(nose.plugins.Plugin):
         return ''.join(traceback.format_exception(exctype, value, tb))
 
     def _is_relevant_tb_level(self, tb):
-        return tb.tb_frame.f_globals.has_key('__unittest')
+        return '__unittest' in tb.tb_frame.f_globals
 
     def _count_relevant_tb_levels(self, tb):
         length = 0
